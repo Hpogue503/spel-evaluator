@@ -2,9 +2,9 @@ package com.utils.spelevaluator;
 
 import org.springframework.context.expression.MapAccessor;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.ReflectivePropertyAccessor;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.web.bind.annotation.*;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.*;
@@ -15,100 +15,91 @@ public class SpelController {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
-    // ===========================
-    //     1) EVALUATE
-    // ===========================
-    // POST /evaluate/{expression}
-
+    /** Evalúa una expresión SpEL sobre un JSON enviado */
     @PostMapping
-    public Object eval(
-            @RequestParam("exp") String expression,
-            @RequestBody Map<String, Object> jsonBody) {
-
-        // Crear el contexto para evaluar SpEL sobre cualquier estructura
-        StandardEvaluationContext ctx = new StandardEvaluationContext(jsonBody);
-        ctx.setPropertyAccessors(List.of(new MapAccessor()));
-
-        // Ejecutar la expresión
-        SpelExpressionParser parser = new SpelExpressionParser();
-        return parser.parseExpression(expression).getValue(ctx);
-    }
-
-    // ===========================
-    //     2) GET EXPRESSION
-    // ===========================
-    // POST /evaluate/get-expression/{value}
-    @PostMapping("/get-expression/{value}")
-    public Map<String, Object> getExpression(
-            @PathVariable String value,
-            @RequestBody Object jsonBody) {
-
-        List<Map<String, String>> results = new ArrayList<>();
-
-        // NOTA: shortPath y safePath empiezan vacíos ("")
-        findMatches(jsonBody, value, "", "", results);
+    public Map<String, Object> eval(@RequestBody Map<String, Object> body) {
+        String expression = (String) body.get("expression");
+        Object data = body.get("data");
 
         Map<String, Object> response = new HashMap<>();
-        response.put("results", results);
+        if (expression == null || data == null) {
+            response.put("error", "Missing 'expression' or 'data' in request");
+            return response;
+        }
+
+        Map<String, Object> jsonMap;
+        if (data instanceof Map) {
+            jsonMap = (Map<String, Object>) data;
+        } else {
+            jsonMap = mapper.convertValue(data, Map.class);
+        }
+
+        StandardEvaluationContext ctx = new StandardEvaluationContext(jsonMap);
+        ctx.setPropertyAccessors(List.of(new MapAccessor(), new ReflectivePropertyAccessor()));
+
+        SpelExpressionParser parser = new SpelExpressionParser();
+        try {
+            Object result = parser.parseExpression(expression).getValue(ctx);
+            response.put("result", result);
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+        }
 
         return response;
     }
 
-    // ===========================
-    //     RECURSIVE SEARCH
-    // ===========================
+    /** Busca todas las expresiones que coincidan con un valor */
+    @PostMapping("/find")
+    public Map<String, Object> findExpression(@RequestBody Map<String, Object> body) {
+        Object valueObj = body.get("value");
+        Object dataObj = body.get("data");
+
+        Map<String, Object> response = new HashMap<>();
+        if (valueObj == null) {
+            response.put("error", "Missing field: value");
+            return response;
+        }
+        if (dataObj == null) {
+            response.put("error", "Missing field: data");
+            return response;
+        }
+
+        String targetValue = valueObj.toString();
+        List<Map<String, String>> results = new ArrayList<>();
+        findMatches(dataObj, targetValue, "", results);
+
+        response.put("results", results);
+        return response;
+    }
+
     @SuppressWarnings("unchecked")
-    private void findMatches(Object node,
-                             String target,
-                             String shortPath,
-                             String safePath,
-                             List<Map<String, String>> results) {
-
+    private void findMatches(Object node, String target, String path, List<Map<String, String>> results) {
         if (node instanceof Map<?, ?> mapNode) {
-
             for (Map.Entry<?, ?> entry : mapNode.entrySet()) {
-
                 String key = entry.getKey().toString();
                 Object value = entry.getValue();
-
-                // Ejemplo:  shortPath = "nested.model"
-                String newShort = shortPath.isEmpty() ? key : shortPath + "." + key;
-
-                // Ejemplo: safePath = "['nested']['model']"
-                String newSafe = safePath + "['" + key + "']";
-
-                processNode(target, results, value, newShort, newSafe);
+                String newPath = path.isEmpty() ? key : path + "." + key;
+                String safePath = path.isEmpty() ? "['" + key + "']" : path + "['" + key + "']";
+                addResultIfMatch(target, results, value, newPath, safePath);
             }
-
         } else if (node instanceof List<?> listNode) {
-
             for (int i = 0; i < listNode.size(); i++) {
-
                 Object value = listNode.get(i);
-
-                String newShort = shortPath + "[" + i + "]";
-                String newSafe = safePath + "[" + i + "]";
-
-                processNode(target, results, value, newShort, newSafe);
+                String newPath = path + "[" + i + "]";
+                String safePath = path + "[" + i + "]";
+                addResultIfMatch(target, results, value, newPath, safePath);
             }
         }
     }
 
-    private void processNode(String target,
-                             List<Map<String, String>> results,
-                             Object value,
-                             String newShort,
-                             String newSafe) {
-
-        // Coincidencia exacta
+    private void addResultIfMatch(String target, List<Map<String, String>> results,
+                                  Object value, String shortPath, String safePath) {
         if (value != null && target.equals(value.toString())) {
             Map<String, String> found = new HashMap<>();
-            found.put("short", newShort);
-            found.put("safe", newSafe);
+            found.put("short", shortPath);
+            found.put("safe", safePath);
             results.add(found);
         }
-
-        // Recursión profunda
-        findMatches(value, target, newShort, newSafe, results);
+        findMatches(value, target, shortPath, results);
     }
 }

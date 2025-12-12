@@ -1,25 +1,22 @@
 async function evaluateExpression() {
-    const exp = document.getElementById("expression").value;
-
-    fetch(`/evaluate?exp=${encodeURIComponent(exp)}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(jsonData)  // tu JSON completo
-    })
-        .then(res => res.json())
-        .then(result => console.log(result))
-        .catch(err => console.error(err));
-
-    const params = new URLSearchParams({ exp });
+    const expression = document.getElementById("eval-expression").value;
+    const jsonText = document.getElementById("eval-json").value;
+    let data;
     try {
-        const res = await fetch(`/evaluate?${params.toString()}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(json)
+        data = JSON.parse(jsonText);
+    } catch(e) {
+        document.getElementById("eval-result").textContent = "JSON inválido!";
+        return;
+    }
+    try {
+        const res = await fetch("/evaluate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ expression, data })
         });
-        const data = await res.json();
-        document.getElementById("eval-result").textContent = JSON.stringify(data, null, 2);
-    } catch (err) {
+        const result = await res.json();
+        document.getElementById("eval-result").textContent = JSON.stringify(result, null, 2);
+    } catch(err) {
         document.getElementById("eval-result").textContent = err;
     }
 }
@@ -27,23 +24,24 @@ async function evaluateExpression() {
 async function findExpression() {
     const value = document.getElementById("find-value").value;
     const jsonText = document.getElementById("find-json").value;
-    let json;
+
+    let data;
     try {
-        json = JSON.parse(jsonText);
+        data = JSON.parse(jsonText);
     } catch(e) {
-        document.getElementById("find-result").textContent = "Invalid JSON!";
+        document.getElementById("find-result").textContent = "JSON inválido!";
         return;
     }
 
     try {
-        const res = await fetch(`/evaluate/get-expression/${encodeURIComponent(value)}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(json)
+        const res = await fetch("/evaluate/find", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ value, data })
         });
-        const data = await res.json();
-        document.getElementById("find-result").textContent = JSON.stringify(data, null, 2);
-    } catch (err) {
+        const result = await res.json();
+        document.getElementById("find-result").textContent = JSON.stringify(result, null, 2);
+    } catch(err) {
         document.getElementById("find-result").textContent = err;
     }
 }

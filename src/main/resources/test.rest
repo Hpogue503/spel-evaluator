@@ -7,7 +7,15 @@
 POST {{adminurl}}/evaluate?exp={{expression}}
 Content-Type: application/json
 
-< ./files/test.json
+{
+  "expression": "serie",
+  "data": {
+    "serie": "TFYLX3",
+    "DEVICE_MODEL": "TFYLX3",
+    "nested": { "model": "TFYLX3" },
+    "list": [ { "device": "TFYLX3" }, { "other": "123" } ]
+  }
+}
 
 ###
 
