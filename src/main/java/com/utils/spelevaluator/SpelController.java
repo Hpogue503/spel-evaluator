@@ -42,7 +42,12 @@ public class SpelController {
             Object result = parser.parseExpression(expression).getValue(ctx);
             response.put("result", result);
         } catch (Exception e) {
-            response.put("error", e.getMessage());
+            String msg = e.getMessage();
+
+            if (msg != null && msg.contains("EL1008E")) {
+                msg = "The specified SpEL expression was not found. Try using the 'safe' notation. ";
+            }
+            response.put("error", msg);
         }
         return response;
     }
@@ -65,14 +70,15 @@ public class SpelController {
 
         String targetValue = valueObj.toString();
         List<Map<String, String>> results = new ArrayList<>();
-        findMatches(dataObj, targetValue, "", results);
+        findMatches(dataObj, targetValue, "", "", results);
 
         response.put("results", results);
         return response;
     }
 
     @SuppressWarnings("unchecked")
-    private void findMatches(Object node, String target, String safePath, List<Map<String, String>> results) {
+    private void findMatches(Object node, String target, String shortPath, String safePath,
+                             List<Map<String, String>> results) {
 
         if (node instanceof Map<?, ?> mapNode) {
             for (Map.Entry<?, ?> entry : mapNode.entrySet()) {
@@ -80,7 +86,7 @@ public class SpelController {
                 Object value = entry.getValue();
 
                 String newSafe = safePath + "['" + key + "']";
-                String newShort = safePath.isEmpty() ? key : safePath.replaceAll("\\['", "").replaceAll("']", "") + "." + key;
+                String newShort = shortPath.isEmpty() ? key : shortPath + "." + key;
 
                 addResultIfMatch(target, results, value, newShort, newSafe);
             }
@@ -89,7 +95,7 @@ public class SpelController {
                 Object value = listNode.get(i);
 
                 String newSafe = safePath + "[" + i + "]";
-                String newShort = safePath + "[" + i + "]";
+                String newShort = shortPath + "[" + i + "]";
 
                 addResultIfMatch(target, results, value, newShort, newSafe);
             }
@@ -104,6 +110,9 @@ public class SpelController {
             found.put("safe", newSafe);
             results.add(found);
         }
-        findMatches(value, target, newSafe, results);
+        // Continuar recursión solo si es mapa o lista
+        if (value instanceof Map || value instanceof List) {
+            findMatches(value, target, newShort, newSafe, results);
+        }
     }
 }
