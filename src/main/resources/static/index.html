@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SpEL Evaluator</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2rem; background: #f4f4f4; }
+        input, button, textarea { margin: 0.5rem 0; padding: 0.5rem; width: 100%; }
+        textarea { height: 150px; }
+        .section { background: white; padding: 1rem; margin-bottom: 2rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
+        h1, h2 { margin-bottom: 0.5rem; }
+        pre { background: #eee; padding: 0.5rem; border-radius: 4px; }
+    </style>
+</head>
+<body>
+<h1>SpEL Evaluator</h1>
+
+<div class="section">
+    <h2>Evaluate Expression</h2>
+    <label>Expression:</label>
+    <input type="text" id="eval-expression" placeholder="list[0].device or DEVICE_NAME_OR_MODEL">
+    <label>JSON:</label>
+    <textarea id="eval-json">{ "DEVICE_NAME_OR_MODEL": "TFYLX3", "list": [{"device": "TFYLX3"}] }</textarea>
+    <button onclick="evaluateExpression()">Evaluate</button>
+    <pre id="eval-result"></pre>
+</div>
+
+<div class="section">
+    <h2>Find Value</h2>
+    <label>Value to find:</label>
+    <input type="text" id="find-value" placeholder="TFYLX3">
+    <label>JSON:</label>
+    <textarea id="find-json">{ "DEVICE_NAME_OR_MODEL": "TFYLX3", "list": [{"device": "TFYLX3"}] }</textarea>
+    <button onclick="findExpression()">Find</button>
+    <pre id="find-result"></pre>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
