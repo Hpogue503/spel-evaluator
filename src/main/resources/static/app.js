@@ -5,7 +5,7 @@ async function evaluateExpression() {
     try {
         data = JSON.parse(jsonText);
     } catch(e) {
-        document.getElementById("eval-result").textContent = "JSON inválido!";
+        document.getElementById("eval-result").textContent = "Invalid JSON!";
         return;
     }
     try {
@@ -29,7 +29,7 @@ async function findExpression() {
     try {
         data = JSON.parse(jsonText);
     } catch(e) {
-        document.getElementById("find-result").textContent = "JSON inválido!";
+        document.getElementById("find-result").textContent = "Invalid JSON!";
         return;
     }
 

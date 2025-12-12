@@ -10,6 +10,7 @@
         .section { background: white; padding: 1rem; margin-bottom: 2rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
         h1, h2 { margin-bottom: 0.5rem; }
         pre { background: #eee; padding: 0.5rem; border-radius: 4px; }
+        .hint { font-size: 0.9rem; color: #555; margin-bottom: 0.5rem; }
     </style>
 </head>
 <body>
@@ -18,9 +19,10 @@
 <div class="section">
     <h2>Evaluate Expression</h2>
     <label>Expression:</label>
-    <input type="text" id="eval-expression" placeholder="SpEL Query">
+    <div class="hint">Enter a SpEL expression to evaluate. Example: <code>data.firstName</code></div>
+    <input type="text" id="eval-expression" placeholder="Example: data.firstName">
     <label>JSON:</label>
-    <textarea id="eval-json"></textarea>
+    <textarea id="eval-json" placeholder='Example: {"firstName": "John", "lastName": "Doe"}'></textarea>
     <button onclick="evaluateExpression()">Evaluate</button>
     <pre id="eval-result"></pre>
 </div>
@@ -28,9 +30,10 @@
 <div class="section">
     <h2>Find Value</h2>
     <label>Value to find:</label>
-    <input type="text" id="find-value" placeholder="Search value">
+    <div class="hint">Enter a value to search for in the JSON to generate SpEL paths.</div>
+    <input type="text" id="find-value" placeholder="Example: John">
     <label>JSON:</label>
-    <textarea id="find-json"></textarea>
+    <textarea id="find-json" placeholder='Example: {"firstName": "John", "lastName": "Doe"}'></textarea>
     <button onclick="findExpression()">Find</button>
     <pre id="find-result"></pre>
 </div>

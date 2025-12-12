@@ -44,7 +44,6 @@ public class SpelController {
         } catch (Exception e) {
             response.put("error", e.getMessage());
         }
-
         return response;
     }
 
@@ -73,33 +72,38 @@ public class SpelController {
     }
 
     @SuppressWarnings("unchecked")
-    private void findMatches(Object node, String target, String path, List<Map<String, String>> results) {
+    private void findMatches(Object node, String target, String safePath, List<Map<String, String>> results) {
+
         if (node instanceof Map<?, ?> mapNode) {
             for (Map.Entry<?, ?> entry : mapNode.entrySet()) {
                 String key = entry.getKey().toString();
                 Object value = entry.getValue();
-                String newPath = path.isEmpty() ? key : path + "." + key;
-                String safePath = path.isEmpty() ? "['" + key + "']" : path + "['" + key + "']";
-                addResultIfMatch(target, results, value, newPath, safePath);
+
+                String newSafe = safePath + "['" + key + "']";
+                String newShort = safePath.isEmpty() ? key : safePath.replaceAll("\\['", "").replaceAll("']", "") + "." + key;
+
+                addResultIfMatch(target, results, value, newShort, newSafe);
             }
         } else if (node instanceof List<?> listNode) {
             for (int i = 0; i < listNode.size(); i++) {
                 Object value = listNode.get(i);
-                String newPath = path + "[" + i + "]";
-                String safePath = path + "[" + i + "]";
-                addResultIfMatch(target, results, value, newPath, safePath);
+
+                String newSafe = safePath + "[" + i + "]";
+                String newShort = safePath + "[" + i + "]";
+
+                addResultIfMatch(target, results, value, newShort, newSafe);
             }
         }
     }
 
     private void addResultIfMatch(String target, List<Map<String, String>> results,
-                                  Object value, String shortPath, String safePath) {
+                                  Object value, String newShort, String newSafe) {
         if (value != null && target.equals(value.toString())) {
             Map<String, String> found = new HashMap<>();
-            found.put("short", shortPath);
-            found.put("safe", safePath);
+            found.put("short", newShort);
+            found.put("safe", newSafe);
             results.add(found);
         }
-        findMatches(value, target, shortPath, results);
+        findMatches(value, target, newSafe, results);
     }
 }
