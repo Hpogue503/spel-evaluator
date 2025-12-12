@@ -4,37 +4,44 @@ import org.springframework.context.expression.MapAccessor;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.ReflectivePropertyAccessor;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
-import org.springframework.web.bind.annotation.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/evaluate")
 public class SpelController {
 
-    private final ObjectMapper mapper = new ObjectMapper();
 
-    /** Evalúa una expresión SpEL sobre un JSON enviado */
     @PostMapping
-    public Map<String, Object> eval(@RequestBody Map<String, Object> body) {
-        String expression = (String) body.get("expression");
-        Object data = body.get("data");
-
+    public Map<String, Object> eval(@RequestBody Object data) {
         Map<String, Object> response = new HashMap<>();
-        if (expression == null || data == null) {
-            response.put("error", "Missing 'expression' or 'data' in request");
+
+        if (!(data instanceof Map<?, ?> bodyMap) || !bodyMap.containsKey("expression")) {
+            response.put("error", "Missing 'expression' or invalid request format.");
+            return response;
+        }
+        String expression = bodyMap.get("expression").toString();
+        Object jsonData = bodyMap.get("data");
+
+        if (expression == null || expression.trim().isEmpty()) {
+            response.put("error", "Expression is empty.");
+            return response;
+        }
+        if (jsonData == null) {
+            response.put("error", "Data is missing.");
             return response;
         }
 
-        Map<String, Object> jsonMap;
-        if (data instanceof Map) {
-            jsonMap = (Map<String, Object>) data;
-        } else {
-            jsonMap = mapper.convertValue(data, Map.class);
-        }
+        Object root = jsonData;
 
-        StandardEvaluationContext ctx = new StandardEvaluationContext(jsonMap);
+        StandardEvaluationContext ctx = new StandardEvaluationContext(root);
         ctx.setPropertyAccessors(List.of(new MapAccessor(), new ReflectivePropertyAccessor()));
 
         SpelExpressionParser parser = new SpelExpressionParser();
@@ -45,19 +52,44 @@ public class SpelController {
             String msg = e.getMessage();
 
             if (msg != null && msg.contains("EL1008E")) {
-                msg = "The specified SpEL expression was not found. Try using the 'safe' notation. ";
+                msg = "Expression not found in JSON. Try a safe path or check your keys.";
+            }
+            response.put("error", msg);
+        }
+        try {
+            Object result = parser.parseExpression(expression).getValue(ctx);
+            response.put("result", result);
+        } catch (Exception e) {
+            String msg = e.getMessage();
+            if (expression == null || expression.isBlank()) {
+                msg = "Expression is empty. Please provide a valid SpEL expression.";
+            }
+            else if (data == null) {
+                msg = "JSON data is missing. Please provide valid JSON.";
+            }
+            else if (msg != null && msg.contains("EL1008E")) {
+                msg = "Expression not found in JSON. Try a safe path or check your keys.";
+            }
+            else if (msg != null && msg.contains("EL1042E")) {
+                msg = "Invalid SpEL syntax. Please check your expression formatting.";
+            }
+            else if (msg != null && msg.contains("EL1007E")) {
+                msg = "Expression cannot be evaluated because a parent object is null. Check your path or use safe navigation.";
+            }
+            else if (msg != null) {
+                msg = "Error evaluating expression: " + msg;
+            } else {
+                msg = "Unknown error evaluating expression.";
             }
             response.put("error", msg);
         }
         return response;
     }
 
-    /** Busca todas las expresiones que coincidan con un valor */
     @PostMapping("/find")
     public Map<String, Object> findExpression(@RequestBody Map<String, Object> body) {
         Object valueObj = body.get("value");
         Object dataObj = body.get("data");
-
         Map<String, Object> response = new HashMap<>();
         if (valueObj == null) {
             response.put("error", "Missing field: value");
@@ -71,7 +103,6 @@ public class SpelController {
         String targetValue = valueObj.toString();
         List<Map<String, String>> results = new ArrayList<>();
         findMatches(dataObj, targetValue, "", "", results);
-
         response.put("results", results);
         return response;
     }
@@ -84,19 +115,15 @@ public class SpelController {
             for (Map.Entry<?, ?> entry : mapNode.entrySet()) {
                 String key = entry.getKey().toString();
                 Object value = entry.getValue();
-
                 String newSafe = safePath + "['" + key + "']";
                 String newShort = shortPath.isEmpty() ? key : shortPath + "." + key;
-
                 addResultIfMatch(target, results, value, newShort, newSafe);
             }
         } else if (node instanceof List<?> listNode) {
             for (int i = 0; i < listNode.size(); i++) {
                 Object value = listNode.get(i);
-
                 String newSafe = safePath + "[" + i + "]";
                 String newShort = shortPath + "[" + i + "]";
-
                 addResultIfMatch(target, results, value, newShort, newSafe);
             }
         }
@@ -110,7 +137,6 @@ public class SpelController {
             found.put("safe", newSafe);
             results.add(found);
         }
-        // Continuar recursión solo si es mapa o lista
         if (value instanceof Map || value instanceof List) {
             findMatches(value, target, newShort, newSafe, results);
         }
