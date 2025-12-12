@@ -1,0 +1,17 @@
+@adminurl=http://localhost:8081
+@expression = instance.variables.start.request.DEVICE_NAME_OR_MODEL
+@value= TFYLX3
+
+###
+
+POST {{adminurl}}/evaluate?exp={{expression}}
+Content-Type: application/json
+
+< ./files/test.json
+
+###
+
+POST {{adminurl}}/evaluate/get-expression/{{value}}
+Content-Type: application/json
+
+< ./files/test.json

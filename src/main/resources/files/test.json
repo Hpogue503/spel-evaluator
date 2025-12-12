@@ -1,0 +1,509 @@
+{
+  "REMOTE-IP": "10.10.13.208",
+  "PASSWORD": "***",
+  "USERNAME": "***",
+  "instance": {
+    "id": "54bdefd3-cfd0-43a0-a7d0-6d6bc855db1c",
+    "processId": "savings",
+    "coreToken": "75f2b612-0787-4d79-b8da-3ddf56d49602",
+    "currentTaskId": "verify",
+    "variables": {
+      "data-update-pep-SV2": {
+        "data": [
+          {
+            "components": [],
+            "id": "step1"
+          },
+          {
+            "components": [
+              {
+                "code": "dui",
+                "text": "DUI"
+              }
+            ],
+            "id": "step2"
+          },
+          {
+            "components": [],
+            "id": "step3"
+          }
+        ],
+        "request": {
+          "remoteAddress": "10.10.13.208",
+          "userAgent": "BancaMovilBI/1.0 (Android 13; TFYLX3; HONOR; 33) ID/1.0 (PHONE; TFYLX3; 2ed18c8c-eab9-48c4-a6ef-8b84b798b47b; SV-4.1001.8.1)",
+          "uri": "uri=/v1/digital-accounts/documents/54bdefd3-cfd0-43a0-a7d0-6d6bc855db1c/data-update-pep-SV2;client=10.10.13.208",
+          "httpMethod": "POST",
+          "multiparts": {
+            "data": {
+              "size": 121,
+              "submittedFileName": null,
+              "contentType": null
+            }
+          },
+          "headers": {
+            "x-6238": "M2wqFdBr9SZ0VSf9Xcvlxfbu/vU6+kDaInZvLWOSReg1C55zMz/t9DvgHUkG/PhnYQhpEQv0f7evYKjA44fC4IEado+B0Q9qn85tk2NmHAADowU5S875NxzJfk7G9U5fGVpPjc37z57lZuiKkfqtUwi6VOrBPPXdmez5dGmi3zWvUy9ZEu8lz7vTY9dSfZQWWuzulNjW3uibr+ouqrKtvFl2ZSPk2jRGLwnFzFt5VkFM6ZLujUp3dMoCTk9G4aLju35spXyfyzL12HcqEH34duwpaUK/WUaAXWPxww7jzRETwCapX8sKiFMzLY2KccpNLHnMGor1mrPugd/HbsWr3Q==",
+            "X-Path-Origin": "/v1/digital-accounts/documents/54bdefd3-cfd0-43a0-a7d0-6d6bc855db1c/data-update-pep-SV2",
+            "geohash": "9fxdmehv2k",
+            "X-B3-Sampled": "1",
+            "X-B3-TraceId": "693b2bc40da7544cd6cf575c53304ca5",
+            "cache-control": "public, max-age=5",
+            "Content-Length": "121",
+            "Content-Type": "multipart/form-data; boundary=2c2a8002-6451-4e5f-a94c-0eb64189caa9",
+            "x-customer-ip": "192.168.3.24",
+            "X-B3-ParentSpanId": "d6cf575c53304ca5",
+            "x-6342": "WIFI",
+            "X-Forwarded-Host": "api-app-sv-dev.apps.appreg.qa.bi.com.gt,api-app-sv-dev.apps.appreg.qa.bi.com.gt",
+            "X-Forwarded-Proto": "http,http",
+            "Host": "api-app-sv-dev.apps.appreg.qa.bi.com.gt",
+            "X-4226-O": "MTc2NTQ4NTUwOTA0OA==",
+            "X-4226": "1765485509048",
+            "X-Forwarded-Port": "80,80",
+            "accept": "*/*",
+            "x-1808": "9jSkHftCcTrjQ03yEr6Sjw==",
+            "X-B3-SpanId": "703f4d39defbdeac",
+            "X-is-applicable-crypt": "false",
+            "Content-Disposition": "form-data; name=\"data\"",
+            "Forwarded": "for=10.10.13.208;host=api-app-sv-dev.apps.appreg.qa.bi.com.gt;proto=http",
+            "X-From-GW": "true",
+            "X-Forwarded-For": "10.10.13.208,10.10.13.208",
+            "accept-encoding": "gzip",
+            "user-agent": "BancaMovilBI/1.0 (Android 13; TFYLX3; HONOR; 33) ID/1.0 (PHONE; TFYLX3; 2ed18c8c-eab9-48c4-a6ef-8b84b798b47b; SV-4.1001.8.1)"
+          }
+        }
+      },
+      "start": {
+        "request": {
+          "remoteAddress": "10.10.13.208",
+          "userAgent": "BancaMovilBI/1.0 (Android 13; TFYLX3; HONOR; 33) ID/1.0 (PHONE; TFYLX3; 2ed18c8c-eab9-48c4-a6ef-8b84b798b47b; SV-4.1001.8.1)",
+          "uri": "uri=/v1/digital-accounts/accounts/savings;client=10.10.13.208",
+          "httpMethod": "POST",
+          "multiparts": {},
+          "headers": {
+            "transfer-encoding": "chunked",
+            "x-6238": "jJPgmssulor9cyJsVG++KnmwPwAT0KkxPsExl3WizhCybIgPLym9kiKOErjxpM3x0tyCII3IL3NAOl/ZW4vWPtpz8edL0ieYrezxc650rvwRjV4VmfdYZguvkLlgsT4oNWLo77k24EBsjwyG0jFVjk2kV1PsgJkHRji5YvHrwNZYlB6VLoTU0rrZXZsuOe/cfoPd/rD413EpSZ7oMObjprtAE4ar7ZoTTMMmW/1W2tmpx4cKl+35/yUNtoLAu62lWIGferrzdRaqxi8n3GUVlGiS3LFor/KWn70fkGJ45p7eq7j7iVeotzHULY0K3B7pXul5s3YWVXvEobAtZ8UisQ==",
+            "X-Path-Origin": "/v1/digital-account/accounts/savings",
+            "geohash": "9fxdmehv2k",
+            "X-B3-Sampled": "1",
+            "X-B3-TraceId": "693b2bb37c31773ea48fc85a3c51f5f3",
+            "cache-control": "public, max-age=5",
+            "Content-Type": "application/json",
+            "x-customer-ip": "192.168.3.24",
+            "X-B3-ParentSpanId": "a48fc85a3c51f5f3",
+            "x-6342": "WIFI",
+            "X-Forwarded-Host": "api-app-sv-dev.apps.appreg.qa.bi.com.gt,api-app-sv-dev.apps.appreg.qa.bi.com.gt",
+            "X-Forwarded-Proto": "http,http",
+            "Host": "api-app-sv-dev.apps.appreg.qa.bi.com.gt",
+            "X-4226-O": "MTc2NTQ4NTQ5MTY0MQ==",
+            "X-4226": "1765485491641",
+            "X-Forwarded-Port": "80,80",
+            "accept": "application/json",
+            "x-1808": "8SKTYnWdLFhXdEWs+FZMpA==",
+            "X-B3-SpanId": "f294db7b79126ad6",
+            "X-is-applicable-crypt": "false",
+            "Forwarded": "for=10.10.13.208;host=api-app-sv-dev.apps.appreg.qa.bi.com.gt;proto=http",
+            "X-From-GW": "true",
+            "X-Forwarded-For": "10.10.13.208,10.10.13.208",
+            "accept-encoding": "gzip",
+            "user-agent": "BancaMovilBI/1.0 (Android 13; TFYLX3; HONOR; 33) ID/1.0 (PHONE; TFYLX3; 2ed18c8c-eab9-48c4-a6ef-8b84b798b47b; SV-4.1001.8.1)"
+          },
+          "DEVICE_TYPE": "PHONE",
+          "OS_VERSION": "Android 13",
+          "SDK_VERSION": "33",
+          "DEVICE_BRAND": "HONOR",
+          "DEVICE_NAME_OR_MODEL": "TFYLX3",
+          "DEVICE_ID": "2ed18c8c-eab9-48c4-a6ef-8b84b798b47b",
+          "APP_VERSION": "SV-4.1001.8.1",
+          "DEVICE_MODEL": "TFYLX3"
+        }
+      },
+      "verify": {
+        "data": {
+          "birthday": "17041991",
+          "dataForm": [
+            {
+              "components": [],
+              "id": "step1"
+            },
+            {
+              "components": [
+                {
+                  "code": "dui",
+                  "text": "DUI"
+                }
+              ],
+              "id": "step2"
+            },
+            {
+              "components": [
+                {
+                  "code": "pep",
+                  "text": "N"
+                },
+                {
+                  "code": "fatca",
+                  "text": "N"
+                },
+                {
+                  "code": "fatca2",
+                  "text": "N"
+                },
+                {
+                  "code": "profesional",
+                  "text": "N"
+                }
+              ],
+              "id": "step3"
+            }
+          ],
+          "dateExpiry": "23012029",
+          "dateIssue": "24012021",
+          "firstLastname": "GALDAMEZ",
+          "firstName": "RUBEN",
+          "gender": "M",
+          "id": "04457547-9",
+          "knownBy": "",
+          "maritalStatus": "SOLTERO(A)",
+          "nationality": "SLV",
+          "placeOfIssue": "tAN SALVADOR, SAN SALVADoR",
+          "profession": "cONSULTOA)",
+          "secondLastname": "ALEMAN",
+          "secondName": "EDGARDO",
+          "spousesName": "",
+          "thirdLastname": ""
+        },
+        "request": {
+          "remoteAddress": "10.10.13.208",
+          "userAgent": "BancaMovilBI/1.0 (Android 13; TFYLX3; HONOR; 33) ID/1.0 (PHONE; TFYLX3; 2ed18c8c-eab9-48c4-a6ef-8b84b798b47b; SV-4.1001.8.1)",
+          "uri": "uri=/v1/digital-accounts/accounts/54bdefd3-cfd0-43a0-a7d0-6d6bc855db1c/verify;client=10.10.13.208",
+          "httpMethod": "POST",
+          "multiparts": {
+            "template": {
+              "size": 24208,
+              "submittedFileName": "template.bin",
+              "contentType": null
+            },
+            "backDocument": {
+              "size": 353552,
+              "submittedFileName": "backDocument.bin",
+              "contentType": null
+            },
+            "data": {
+              "size": 614,
+              "submittedFileName": null,
+              "contentType": null
+            },
+            "frontDocument": {
+              "size": 327160,
+              "submittedFileName": "frontDocument.bin",
+              "contentType": null
+            },
+            "templateDocument": {
+              "size": 71332,
+              "submittedFileName": "templateDocument.bin",
+              "contentType": null
+            },
+            "faceImage": {
+              "size": 857576,
+              "submittedFileName": "faceImage.jpg",
+              "contentType": null
+            }
+          },
+          "headers": {
+            "x-6238": "d1hRUg+3eVrpE6DtqvJY/QJu3A2n+rNS++TzFO7reRgqQz84OmsoS+4U3wy4FbQUbu+OQ0HtLwljCRoQwNGtWzmpAPp3SV0WwgUxhMyYP6OHQuOSH0xMC8/7Y50fwtSEaDfSqdur5aCfsZAcJiZVJNBgO2bVpxIhQPmmKbjQ7aA0SJpiVZtEUXOrfUjYDIbAdSkatrcsfSX1kqlYt/Ny03U5FRtqfrmSl5N000mpr6/bdoPyUQAW0OyooSXexxOn99udilD7u7Ip3wd7fhc/gW1baw9GnSZO01j7OsYUSfpX382xeuonl0g0QvN9iAb1XZw8GwK5/1EwU0yZaBlATA==",
+            "X-Path-Origin": "/v1/digital-account/accounts/savings/54bdefd3-cfd0-43a0-a7d0-6d6bc855db1c/verify",
+            "geohash": "9fxdmehv2k",
+            "X-B3-Sampled": "1",
+            "X-B3-TraceId": "693b2cea3f766ad4c675939e928db8e8",
+            "cache-control": "public, max-age=5",
+            "Content-Length": "353552",
+            "Content-Type": "multipart/form-data; boundary=6e083ca9-310e-4a17-9731-4f9e028c764a",
+            "x-customer-ip": "192.168.3.24",
+            "X-B3-ParentSpanId": "c675939e928db8e8",
+            "x-6342": "WIFI",
+            "X-Forwarded-Host": "api-app-sv-dev.apps.appreg.qa.bi.com.gt,api-app-sv-dev.apps.appreg.qa.bi.com.gt",
+            "X-Forwarded-Proto": "http,http",
+            "Host": "api-app-sv-dev.apps.appreg.qa.bi.com.gt",
+            "X-4226-O": "MTc2NTQ4NTgwMDk5MA==",
+            "X-4226": "1765485800990",
+            "X-Forwarded-Port": "80,80",
+            "accept": "*/*",
+            "x-1808": "p0gHAX/g7AQ0yzgkvEabZg==",
+            "X-B3-SpanId": "856b61f2e01382a0",
+            "X-is-applicable-crypt": "false",
+            "Content-Disposition": "form-data; name=\"backDocument\"; filename=\"backDocument.bin\"",
+            "Forwarded": "for=10.10.13.208;host=api-app-sv-dev.apps.appreg.qa.bi.com.gt;proto=http",
+            "X-From-GW": "true",
+            "X-Forwarded-For": "10.10.13.208,10.10.13.208",
+            "accept-encoding": "gzip",
+            "user-agent": "BancaMovilBI/1.0 (Android 13; TFYLX3; HONOR; 33) ID/1.0 (PHONE; TFYLX3; 2ed18c8c-eab9-48c4-a6ef-8b84b798b47b; SV-4.1001.8.1)"
+          },
+          "DEVICE_TYPE": "PHONE",
+          "OS_VERSION": "Android 13",
+          "SDK_VERSION": "33",
+          "DEVICE_BRAND": "HONOR",
+          "DEVICE_NAME_OR_MODEL": "TFYLX3",
+          "DEVICE_ID": "2ed18c8c-eab9-48c4-a6ef-8b84b798b47b",
+          "APP_VERSION": "SV-4.1001.8.1",
+          "DEVICE_MODEL": "TFYLX3"
+        }
+      },
+      "collected-data": {
+        "user-recognition-start-results": {
+          "person": null,
+          "photo": null,
+          "address": null,
+          "blacklistCoreResult": null,
+          "chkrecData": null,
+          "errorMessage": null,
+          "jumioStartResponse": null,
+          "jumioStatusResponse": null,
+          "jumioTransaction": null,
+          "jumioDocument": null,
+          "jumioVerification": null
+        },
+        "verify-user-error": {
+          "reference": "",
+          "code": "551",
+          "description": "No existe cliente para el usuario especificado"
+        },
+        "check-username-error": {
+          "reference": "",
+          "code": "074",
+          "description": "Cliente no existe"
+        },
+        "black-list-recognition-data": {
+          "id": "04457547-9",
+          "customerType": "INDIVIDUAL",
+          "idType": "ID",
+          "recipientType": "CUSTOMER",
+          "firstName": "RUBEN",
+          "secondName": "EDGARDO",
+          "surename": "GALDAMEZ",
+          "secondSurename": "ALEMAN",
+          "birthDate": 11122025,
+          "scanReference": null,
+          "type": null,
+          "os": null,
+          "OS_DEVICE": "Android 13",
+          "MODEL_DEVICE": "TFYLX3"
+        },
+        "has-beneficiaries-in-blacklists": true,
+        "is-new-user": true,
+        "check-username-result": {
+          "ref": "",
+          "username": "nul*",
+          "suggestedUsername": null,
+          "properties": null,
+          "validUsername": null
+        },
+        "check-black-list": true,
+        "user-recognition-start": true,
+        "check-acount-result": {
+          "reference": "",
+          "code": "562",
+          "description": "Cliente no cuenta con una Cuenta Digital",
+          "properties": {
+            "property": [
+              {
+                "key": "Contrantes",
+                "value": "BANCO INDUSTRIAL EL SALVADOR, SOCIEDA ANÓNIMA"
+              },
+              {
+                "key": "DomiContrantes",
+                "value": "AVENIDA LAS MAGNOLIAS, NO.144, COLONIA SAN BENITO, SAN SALVADOR"
+              },
+              {
+                "key": "DocuContrantes",
+                "value": "CERO SEIS UNO CUATRO-UNO DOS CERO UNO UNO CERO-UNO CERO DOS-CERO"
+              },
+              {
+                "key": "EdadContrantes",
+                "value": ""
+              },
+              {
+                "key": "ProfeContrantes",
+                "value": ""
+              },
+              {
+                "key": "Representante",
+                "value": "Edgar Orlando Zuniga Perez"
+              },
+              {
+                "key": "EdadRepresentante",
+                "value": "45"
+              },
+              {
+                "key": "OcupaRepresentante",
+                "value": "ABOGADO"
+              },
+              {
+                "key": "DomiRepresentante",
+                "value": "San Salvador"
+              },
+              {
+                "key": "DepaRepresentante",
+                "value": "San Salvador"
+              },
+              {
+                "key": "NumIdRepresentante",
+                "value": "CERO CERO NUEVE DOS UNO UNO CERO DOS-DOS"
+              },
+              {
+                "key": "RetCajAut",
+                "value": "US$ 0.70 + IVA (POR TRANSACCIÓN, GRATIS PRIMERAS 4 TRANSACCIONES)"
+              },
+              {
+                "key": "TrxCAIntBies",
+                "value": "US$ 3.50 + IVA (POR TRANSACCIÓN)"
+              },
+              {
+                "key": "TrxCAExtBies",
+                "value": "US$ 4.50 + IVA (POR TRANSACCIÓN)"
+              },
+              {
+                "key": "RepoTarj",
+                "value": "US$ 4.42 + IVA"
+              },
+              {
+                "key": "NumIdRepresComp",
+                "value": "San Salvador"
+              },
+              {
+                "key": "Producto",
+                "value": "San Salvador"
+              }
+            ]
+          }
+        },
+        "user-recognition-start-data": {
+          "id": " ",
+          "customerType": "INDIVIDUAL",
+          "idType": "ID",
+          "recipientType": "PARTICIPANT",
+          "firstName": "",
+          "secondName": null,
+          "surename": null,
+          "secondSurename": null,
+          "birthDate": 11122025,
+          "scanReference": null,
+          "type": null,
+          "os": null
+        },
+        "is-new-account": true,
+        "beneficiaries": [
+          {
+            "data": {
+              "id": "04457547-9",
+              "customerType": "INDIVIDUAL",
+              "idType": "ID",
+              "recipientType": "BENEFICIARY",
+              "firstName": "saul Rodriguez",
+              "secondName": " ",
+              "surename": " ",
+              "secondSurename": " ",
+              "birthDate": 11122025,
+              "scanReference": null,
+              "type": null,
+              "os": null
+            }
+          },
+          {
+            "data": {
+              "id": "04457547-9",
+              "customerType": "INDIVIDUAL",
+              "idType": "ID",
+              "recipientType": "BENEFICIARY",
+              "firstName": " ",
+              "secondName": null,
+              "surename": null,
+              "secondSurename": null,
+              "birthDate": 11122025,
+              "scanReference": null,
+              "type": null,
+              "os": null
+            }
+          },
+          {
+            "data": {
+              "id": "04457547-9",
+              "customerType": "INDIVIDUAL",
+              "idType": "ID",
+              "recipientType": "BENEFICIARY",
+              "firstName": " ",
+              "secondName": null,
+              "surename": null,
+              "secondSurename": null,
+              "birthDate": 11122025,
+              "scanReference": null,
+              "type": null,
+              "os": null
+            }
+          }
+        ],
+        "is-new-client": true,
+        "token-generation-result": {
+          "reference": "TVbhdfAHZlZh",
+          "token": "75f*********************************",
+          "documentType": "D",
+          "clientId": "04457547-9"
+        }
+      }
+    },
+    "status": "RUNNING",
+    "currentRequest": {}
+  },
+  "current-request": {
+    "remoteAddress": "10.10.13.208",
+    "userAgent": "BancaMovilBI/1.0 (Android 13; TFYLX3; HONOR; 33) ID/1.0 (PHONE; TFYLX3; 2ed18c8c-eab9-48c4-a6ef-8b84b798b47b; SV-4.1001.8.1)",
+    "uri": "uri=/v1/digital-accounts/passwords/54bdefd3-cfd0-43a0-a7d0-6d6bc855db1c;client=10.10.13.208",
+    "httpMethod": "POST",
+    "multiparts": {
+      "password": [
+        "REDACTED"
+      ]
+    },
+    "data": {
+      "size": 2252
+    },
+    "confirmPassword": {
+      "size": 12
+    }
+  },
+  "headers": {
+    "x-6238": "KTCg7tUElN10OijiK30cILzdilT0rEU0xxZ48bA0KGvJCoBxPrm4uF7iQDnscWEeiNZnKqUIZkk8nPGZ1IEZtCpoHAAbJdcFWmx/OD9m4KWwv9Eb3/Mbtmo+JFsMSWqwror2ZgNXuSfpXmzLt6J7dD6BSOojMHrWOhtes85uysm2OJeUTc0ipthQdHQSYYmNB8JwoIV+Zs+f9O47F5uu+O7O8Dkl0FjMnMKHwb4KeRFetPF8/XZQQWg5Dmnqq+8I5D8oRrrAgADLapLqnsX3FrZmJyHOmc34GwW1bXPN3VNtCkV1Js7IpZkn95+VXXkjss630K1RRYWnzI1VU5xj4g==",
+    "X-Path-Origin": "/v1/digital-accounts/passwords/54bdefd3-cfd0-43a0-a7d0-6d6bc855db1c",
+    "geohash": "9fxdmehv2k",
+    "X-B3-Sampled": "1",
+    "X-B3-TraceId": "693b2df7c2dbe20aca3ab64ec3b02775",
+    "cache-control": "public, max-age=5",
+    "Content-Length": "12",
+    "Content-Type": "multipart/form-data; boundary=ca7ec381-6072-46b4-8e40-cbb34f88896f",
+    "x-customer-ip": "192.168.3.24",
+    "X-B3-ParentSpanId": "ca3ab64ec3b02775",
+    "x-6342": "WIFI",
+    "X-Forwarded-Host": "api-app-sv-dev.apps.appreg.qa.bi.com.gt,api-app-sv-dev.apps.appreg.qa.bi.com.gt",
+    "X-Forwarded-Proto": "http,http",
+    "Host": "api-app-sv-dev.apps.appreg.qa.bi.com.gt",
+    "X-4226-O": "MTc2NTQ4NjA3MTI0NA==",
+    "X-4226": "1765486071244",
+    "X-Forwarded-Port": "80,80",
+    "accept": "*/*",
+    "x-1808": "d7RljrRE9QFj2+cVGrS56w==",
+    "X-B3-SpanId": "fba792ff413a7ccd",
+    "X-is-applicable-crypt": "false",
+    "Content-Disposition": "form-data; name=\"confirmPassword\"",
+    "Forwarded": "for=10.10.13.208;host=api-app-sv-dev.apps.appreg.qa.bi.com.gt;proto=http",
+    "X-From-GW": "true",
+    "X-Forwarded-For": "10.10.13.208,10.10.13.208",
+    "accept-encoding": "gzip",
+    "user-agent": "BancaMovilBI/1.0 (Android 13; TFYLX3; HONOR; 33) ID/1.0 (PHONE; TFYLX3; 2ed18c8c-eab9-48c4-a6ef-8b84b798b47b; SV-4.1001.8.1)"
+  },
+  "DEVICE_TYPE": "PHONE",
+  "OS_VERSION": "Android 13",
+  "SDK_VERSION": "33",
+  "DEVICE_BRAND": "HONOR",
+  "DEVICE_NAME_OR_MODEL": "TFYLX3",
+  "DEVICE_ID": "2ed18c8c-eab9-48c4-a6ef-8b84b798b47b",
+  "APP_VERSION": "SV-4.1001.8.1",
+  "DEVICE_MODEL": "TFYLX3"
+}
