@@ -1,13 +1,14 @@
 async function evaluateExpression() {
-    const exp = document.getElementById("eval-expression").value;
-    const jsonText = document.getElementById("eval-json").value;
-    let json;
-    try {
-        json = JSON.parse(jsonText);
-    } catch(e) {
-        document.getElementById("eval-result").textContent = "Invalid JSON!";
-        return;
-    }
+    const exp = document.getElementById("expression").value;
+
+    fetch(`/evaluate?exp=${encodeURIComponent(exp)}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(jsonData)  // tu JSON completo
+    })
+        .then(res => res.json())
+        .then(result => console.log(result))
+        .catch(err => console.error(err));
 
     const params = new URLSearchParams({ exp });
     try {

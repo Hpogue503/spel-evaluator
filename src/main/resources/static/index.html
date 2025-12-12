@@ -18,9 +18,9 @@
 <div class="section">
     <h2>Evaluate Expression</h2>
     <label>Expression:</label>
-    <input type="text" id="eval-expression" placeholder="list[0].device or DEVICE_NAME_OR_MODEL">
+    <input type="text" id="eval-expression" placeholder="Ingresa la expresión a evaluar">
     <label>JSON:</label>
-    <textarea id="eval-json">{ "DEVICE_NAME_OR_MODEL": "TFYLX3", "list": [{"device": "TFYLX3"}] }</textarea>
+    <textarea id="eval-json"></textarea>
     <button onclick="evaluateExpression()">Evaluate</button>
     <pre id="eval-result"></pre>
 </div>
@@ -28,9 +28,9 @@
 <div class="section">
     <h2>Find Value</h2>
     <label>Value to find:</label>
-    <input type="text" id="find-value" placeholder="TFYLX3">
+    <input type="text" id="find-value" placeholder="Ingresa el valor a encontrar">
     <label>JSON:</label>
-    <textarea id="find-json">{ "DEVICE_NAME_OR_MODEL": "TFYLX3", "list": [{"device": "TFYLX3"}] }</textarea>
+    <textarea id="find-json"></textarea>
     <button onclick="findExpression()">Find</button>
     <pre id="find-result"></pre>
 </div>
