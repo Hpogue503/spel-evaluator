@@ -1,17 +1,18 @@
-# Usa OpenJDK 17
-FROM openjdk:17-jdk-slim
+# 1️⃣ Imagen base: OpenJDK 17 oficial (Eclipse Temurin, slim)
+FROM eclipse-temurin:17-jdk-jammy
 
-# Directorio de la app
+# 2️⃣ Directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copia todo tu proyecto
+# 3️⃣ Copia todo el proyecto al contenedor
 COPY . /app
 
-# Compila el proyecto con Maven
+# 4️⃣ Compila la app usando Maven Wrapper (sin tests)
 RUN ./mvnw clean package -DskipTests
 
-# Expone el puerto 8081
+# 5️⃣ Expone el puerto
 EXPOSE 8081
 
-# Comando para ejecutar tu jar
+# 6️⃣ Comando para ejecutar el jar generado
+# Ajusta el nombre del jar según tu artifactId y versión
 CMD ["java", "-jar", "target/spel-evaluator-1.0.0.jar"]
