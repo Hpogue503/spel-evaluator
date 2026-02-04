@@ -1,111 +1,165 @@
-function formatJSON(textareaId) {
-    const area = document.getElementById(textareaId);
-    try {
-        const parsed = JSON.parse(area.value);
-        area.value = JSON.stringify(parsed, null, 2);
-    } catch(e) {
-        // Si no es JSON válido, no formatea
-    }
-}
-
-// Formatea al pegar
-document.getElementById("eval-json").addEventListener("input", () => formatJSON("eval-json"));
-document.getElementById("find-json").addEventListener("input", () => formatJSON("find-json"));
+// =======================
+// SpEL
+// =======================
 
 async function evaluateExpression() {
-    const expression = document.getElementById("eval-expression").value.trim();
-    const jsonText = document.getElementById("eval-json").value.trim();
     const resultArea = document.getElementById("eval-result");
+    resultArea.style.color = ""; // reset color
 
-    if (!jsonText) {
-        resultArea.textContent = "JSON is empty. Please enter a valid JSON object.";
-        resultArea.style.color = "red";
-        return;
-    }
-    if (!expression) {
-        resultArea.textContent = "Expression is empty. Please enter a valid SpEL expression.";
-        resultArea.style.color = "red";
-        return;
-    }
+    const expression = document.getElementById("eval-expression").value;
+    const jsonText = document.getElementById("eval-json").value;
 
     let data;
     try {
         data = JSON.parse(jsonText);
     } catch (e) {
-        resultArea.textContent = "Invalid JSON. Please check your syntax.";
+        resultArea.textContent = "Invalid JSON!";
         resultArea.style.color = "red";
         return;
     }
 
     try {
-        const res = await fetch("/evaluate", {
+        const res = await fetch("/spel/evaluate", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ expression, data })
         });
-        const json = await res.json();
 
-        if (json.error) {
-            resultArea.textContent = `Error: ${json.error}`;
-            resultArea.style.color = "red";
-        } else if (json.result === null || json.result === undefined) {
-            resultArea.textContent = "Expression not found in JSON. Try a safe path or check your keys.";
-            resultArea.style.color = "red";
-        } else {
-            resultArea.textContent = JSON.stringify(json.result, null, 2);
-            resultArea.style.color = "green";
-        }
-    } catch(err) {
-        resultArea.textContent = `Unexpected error: ${err}`;
+        const result = await res.json();
+        resultArea.textContent = JSON.stringify(result, null, 2);
+        resultArea.style.color = "#2e7d32"; // verde
+    } catch (err) {
+        resultArea.textContent = err;
         resultArea.style.color = "red";
     }
 }
 
 async function findExpression() {
-    const value = document.getElementById("find-value").value.trim();
-    const jsonText = document.getElementById("find-json").value.trim();
     const resultArea = document.getElementById("find-result");
+    resultArea.style.color = ""; // reset color
 
-    if (!jsonText) {
-        resultArea.textContent = "JSON is empty. Please enter a valid JSON object.";
-        resultArea.style.color = "red";
-        return;
-    }
-    if (!value) {
-        resultArea.textContent = "Value is empty. Please enter a value to find.";
-        resultArea.style.color = "red";
-        return;
-    }
+    const value = document.getElementById("find-value").value;
+    const jsonText = document.getElementById("find-json").value;
 
     let data;
     try {
         data = JSON.parse(jsonText);
-    } catch(e) {
-        resultArea.textContent = "Invalid JSON. Please check your syntax.";
+    } catch (e) {
+        resultArea.textContent = "Invalid JSON!";
+        resultArea.style.color = "red";
+        return;
+    }
+
+    if (!value || !value.trim()) {
+        resultArea.textContent = "Value is empty!";
         resultArea.style.color = "red";
         return;
     }
 
     try {
-        const res = await fetch("/evaluate/find", {
+        const res = await fetch("/spel/find", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ value, data })
         });
-        const json = await res.json();
 
-        if (json.error) {
-            resultArea.textContent = `Error: ${json.error}`;
-            resultArea.style.color = "red";
-        } else if (!json.results || json.results.length === 0) {
-            resultArea.textContent = "Value not found in JSON.";
-            resultArea.style.color = "red";
-        } else {
-            resultArea.textContent = JSON.stringify(json.results, null, 2);
-            resultArea.style.color = "green";
-        }
-    } catch(err) {
-        resultArea.textContent = `Unexpected error: ${err}`;
+        const result = await res.json();
+        resultArea.textContent = JSON.stringify(result, null, 2);
+        resultArea.style.color = "#2e7d32"; // verde
+    } catch (err) {
+        resultArea.textContent = err;
         resultArea.style.color = "red";
     }
+}
+
+// =======================
+// JSONPath
+// =======================
+
+async function evaluateJsonPath() {
+    const resultArea = document.getElementById("jp-eval-result");
+    resultArea.style.color = "";
+
+    const path = document.getElementById("jp-eval-path").value;
+    const jsonText = document.getElementById("jp-eval-json").value;
+
+    let data;
+    try {
+        data = JSON.parse(jsonText);
+    } catch (e) {
+        resultArea.textContent = "Invalid JSON!";
+        resultArea.style.color = "red";
+        return;
+    }
+
+    if (!path || !path.trim()) {
+        resultArea.textContent = "JSONPath is empty!";
+        resultArea.style.color = "red";
+        return;
+    }
+
+    try {
+        const res = await fetch("/jsonpath/evaluate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ path, data })
+        });
+
+        const result = await res.json();
+        resultArea.textContent = JSON.stringify(result, null, 2);
+        resultArea.style.color = "#2e7d32"; // verde
+    } catch (err) {
+        resultArea.textContent = err;
+        resultArea.style.color = "red";
+    }
+}
+
+async function findJsonPath() {
+    const resultArea = document.getElementById("jp-find-result");
+    resultArea.style.color = "";
+
+    const value = document.getElementById("jp-find-value").value;
+    const jsonText = document.getElementById("jp-find-json").value;
+
+    let data;
+    try {
+        data = JSON.parse(jsonText);
+    } catch (e) {
+        resultArea.textContent = "Invalid JSON!";
+        resultArea.style.color = "red";
+        return;
+    }
+
+    if (!value || !value.trim()) {
+        resultArea.textContent = "Value is empty!";
+        resultArea.style.color = "red";
+        return;
+    }
+
+    try {
+        const res = await fetch("/jsonpath/find-smart", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ value, data })
+        });
+
+        const result = await res.json();
+        resultArea.textContent = JSON.stringify(result, null, 2);
+        resultArea.style.color = "#2e7d32"; // verde
+    } catch (err) {
+        resultArea.textContent = err;
+        resultArea.style.color = "red";
+    }
+}
+
+// =======================
+// Util
+// =======================
+
+function copy(btn) {
+    const pre = btn.closest(".result-card").querySelector("pre");
+    navigator.clipboard.writeText(pre.innerText);
+
+    btn.textContent = "✅";
+    setTimeout(() => (btn.textContent = "📋"), 1000);
 }

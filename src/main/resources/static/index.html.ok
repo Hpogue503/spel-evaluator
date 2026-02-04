@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Expression Path Explorer</title>
+    <title>Evaluator Tools</title>
     <style>
 
         :root {
@@ -142,6 +142,7 @@
             word-break: break-word; /* rompe palabras largas si es necesario */
             overflow-x: hidden;    /* elimina scroll horizontal */
             border: 1px solid var(--border);
+            cursor: pointer;
         }
 
         button:hover { background: var(--primary-hover); }
@@ -167,7 +168,7 @@
 </head>
 <body>
 
-<h1>Expression Path Explorer</h1>
+<h1>Evaluator Tools</h1>
 
 <div class="tabs">
     <div class="tab active" data-tab="spel">SpEL</div>

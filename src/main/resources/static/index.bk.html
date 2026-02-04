@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SpEL Evaluator</title>
+
+    <style>
+        :root {
+            /* ===== Light theme (Green elegant) ===== */
+            --bg-main: #f6f4ef;
+            --bg-card: #ffffff;
+            --text-main: #2b2b2b;
+            --text-muted: #555;
+            --border: #d6d3cc;
+            --input-bg: #fafafa;
+            --pre-bg: #efefef;
+            --button-bg: #5f7f63;
+            --button-hover: #4f6b53;
+            --shadow: rgba(0, 0, 0, 0.08);
+        }
+
+        /* ===== Dark theme ===== */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-main: #121212;
+                --bg-card: #1e1e1e;
+                --text-main: #f1f1f1;
+                --text-muted: #b5b5b5;
+                --border: #333;
+                --input-bg: #1a1a1a;
+                --pre-bg: #181818;
+                --button-bg: #2f8f6f;
+                --button-hover: #26755c;
+                --shadow: rgba(0, 0, 0, 0.6);
+            }
+        }
+
+        /* ===== Base ===== */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+            background: var(--bg-main);
+            color: var(--text-main);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            margin-bottom: 0.5rem;
+        }
+
+        /* ===== Layout ===== */
+        .container {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .section {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px var(--shadow);
+            flex: 1;
+            min-width: 320px;
+        }
+
+        /* ===== Inputs ===== */
+        input, textarea, button {
+            width: 100%;
+            box-sizing: border-box;
+            margin: 0.5rem 0;
+            padding: 0.6rem 0.7rem;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            font-size: 0.95rem;
+        }
+
+        input, textarea {
+            background: var(--input-bg);
+            color: var(--text-main);
+        }
+
+        textarea {
+            height: 280px;
+            font-family: monospace;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* ===== Button ===== */
+        button {
+            margin-top: 1rem;
+            background: var(--button-bg);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.2s ease;
+        }
+
+        button:hover {
+            background: var(--button-hover);
+        }
+
+        /* ===== Result ===== */
+        pre {
+            margin-top: 1rem;
+            background: var(--pre-bg);
+            padding: 0.8rem;
+            border-radius: 10px;
+            white-space: pre-wrap;
+            border: 1px solid var(--border);
+        }
+
+        .hint {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+        }
+
+        .full-width {
+            flex: 1 1 100%;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            body {
+                margin: 1rem;
+            }
+
+            textarea {
+                height: 220px;
+            }
+        }
+
+        .copyable {
+            cursor: pointer;
+            padding: 0.25rem 0.4rem;
+            border-radius: 6px;
+            transition: background 0.15s;
+        }
+
+        .copyable:hover {
+            background: rgba(0, 0, 0, 0.08);
+        }
+
+        .copied {
+            background: rgba(0, 128, 0, 0.15) !important;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-right: 6px;
+        }
+
+        .badge-short {
+            background: #e3f2fd;
+            color: #0d47a1;
+        }
+
+        .badge-safe {
+            background: #e8f5e9;
+            color: #1b5e20;
+        }
+    </style>
+</head>
+<body>
+<h1>SpEL Tools</h1>
+
+<div class="container">
+
+    <div class="section">
+        <h2>Find Value</h2>
+        <label>Value to find:</label>
+        <div class="hint">Enter a value to search for in the JSON to generate SpEL paths.</div>
+        <input type="text" id="find-value" placeholder="Example: John">
+        <label>JSON:</label>
+        <textarea id="find-json" placeholder='Example: {"firstName": "John", "lastName": "Doe"}'></textarea>
+        <button onclick="findExpression()">Generate SpEL</button>
+        <pre id="find-result"></pre>
+    </div>
+    <div class="section">
+        <h2>Evaluate Expression</h2>
+        <label>Expression:</label>
+        <div class="hint">Enter a SpEL expression to evaluate. Example: <code>data.firstName</code></div>
+        <input type="text" id="eval-expression" placeholder="Example: data.firstName">
+        <label>JSON:</label>
+        <textarea id="eval-json" placeholder='Example: {"firstName": "John", "lastName": "Doe"}'></textarea>
+        <button onclick="evaluateExpression()">Evaluate SpEL</button>
+        <pre id="eval-result"></pre>
+    </div>
+
+
+</div>
+<h1>JSONPath Tools</h1>
+
+<div class="container">
+
+    <div class="section">
+        <!-- ===== FIND ===== -->
+        <h2>Find JSONPath by Value</h2>
+        <div class="hint">Enter a value to generate JSONPath expressions.</div>
+        <input type="text" id="jp-find-value" placeholder="Example: Juan">
+        <textarea id="jp-find-json"
+                  placeholder='{"user":{"name":"Juan","items":[{"name":"Juan"}]}}'></textarea>
+        <button onclick="findJsonPath()">Generate JSONPath</button>
+        <pre id="jp-find-result"></pre>
+    </div>
+
+
+    <div class="section">
+
+        <!-- ===== EVALUATE ===== -->
+        <h2>Evaluate JSONPath</h2>
+        <div class="hint">Evaluate a JSONPath expression against JSON.</div>
+
+        <input type="text" id="jp-eval-path" placeholder="$.user.name">
+
+        <textarea id="jp-eval-json"
+                  placeholder='{"user":{"name":"Juan"}}'></textarea>
+
+        <button onclick="evaluateJsonPath()">Evaluate JSONPath</button>
+
+        <pre id="jp-eval-result"></pre>
+    </div>
+</div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

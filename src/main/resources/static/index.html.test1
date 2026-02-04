@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Expression Path Explorer</title>
+    <title>Evaluator Tools</title>
     <style>
 
         :root {
@@ -16,6 +16,8 @@
             --shadow: rgba(0,0,0,0.1);
             --input-bg: #fdfdfd;
             --pre-bg: #f5f5f5;
+            --error: #d32f2f;
+            --success: #388e3c;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -30,72 +32,78 @@
                 --shadow: rgba(0,0,0,0.6);
                 --input-bg: #1a1a1a;
                 --pre-bg: #2a2a2a;
+                --error: #f44336;
+                --success: #81c784;
             }
         }
 
         body {
             font-family: Arial, sans-serif;
-            margin: 1rem 2rem; /* menos margen superior */
+            margin: 1rem 2rem;
             background: var(--bg-main);
             color: var(--text-main);
         }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 1rem; /* menos espacio debajo del título */
-        }
+        h1 { text-align: center; margin-bottom: 1rem; }
+        h2 { margin-bottom: 0.5rem; }
+        h3 { margin-bottom: 0.3rem; }
 
-
+        /* ===== Tabs principales ===== */
         .tabs {
             display: flex;
             border-bottom: 2px solid var(--border);
             margin-bottom: 1rem;
             cursor: pointer;
         }
-
         .tab {
             padding: 0.8rem 1.2rem;
             font-weight: bold;
             color: var(--text-muted);
             transition: all 0.2s;
         }
-
-        .tab.active {
-            color: var(--primary);
-            border-bottom: 3px solid var(--primary);
-        }
-
+        .tab.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
         .tab:hover { color: var(--primary-hover); }
 
-        .tab-content { display: none; animation: fadeIn 0.3s; }
+        .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        /* Flex layout for Find & Evaluate side by side */
-        .tab-inner {
+        /* ===== Sub-tabs dentro de SpEL ===== */
+        .sub-tabs {
             display: flex;
-            gap: 2rem;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 1rem;
+            cursor: pointer;
+        }
+        .sub-tab {
+            padding: 0.6rem 1rem;
+            font-weight: bold;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+        .sub-tab.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
+        .sub-tab:hover { color: var(--primary-hover); }
+        .sub-tab-content { display: none; }
+        .sub-tab-content.active { display: block; }
+
+        /* ===== Layout horizontal JSON / Result ===== */
+        .horizontal-split {
+            display: flex;
+            gap: 1rem;
             flex-wrap: wrap;
         }
+        .horizontal-split .card { flex: 1; min-width: 300px; }
 
-        /* Card style */
         .card {
             background: var(--bg-card);
             padding: 1.5rem;
             border-radius: 16px;
             box-shadow: 0 6px 18px var(--shadow);
-            flex: 1;
-            min-width: 300px;
         }
 
         label { font-weight: bold; margin-top: 0.5rem; display:block; }
         .hint { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; }
 
-        /* ===== Inputs y textarea ===== */
+        /* Inputs y textarea */
         input, textarea, button {
             box-sizing: border-box;
             width: 100%;
@@ -104,19 +112,13 @@
             border-radius: 10px;
             border: 1px solid var(--border);
             font-family: monospace;
-            font-size: 0.75rem; /* más pequeño */
+            font-size: 0.75rem;
             background: var(--input-bg);
             color: var(--text-main);
         }
 
-        /* textarea específico */
-        textarea {
-            height: 180px;
-            resize: vertical;
-            font-size: 0.75rem; /* más pequeño */
-        }
+        textarea { height: 180px; resize: vertical; font-size: 0.75rem; }
 
-        /* buttons */
         button {
             padding: 0.8rem;
             margin-top: 1rem;
@@ -124,124 +126,138 @@
             border: none;
             background: var(--primary);
             color: #fff;
-            font-size: 0.65rem; /* puede quedar un poco más grande que textarea/input */
+            font-size: 0.65rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
         }
+        button:hover { background: var(--primary-hover); }
 
-        /* pre (resultados) */
         pre {
             margin-top: 1rem;
             background: var(--pre-bg);
             padding: 0.8rem;
             border-radius: 10px;
             font-family: monospace;
-            font-size: 0.65rem; /* letra más pequeña */
-            white-space: pre-wrap; /* permite que el texto se divida en varias líneas */
-            word-break: break-word; /* rompe palabras largas si es necesario */
-            overflow-x: hidden;    /* elimina scroll horizontal */
+            font-size: 0.65rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+            overflow-x: hidden;
             border: 1px solid var(--border);
+            cursor: pointer;
         }
 
-        button:hover { background: var(--primary-hover); }
+        .pre-success { color: var(--success); }
+        .pre-error { color: var(--error); }
 
-
-        pre:hover { background: rgba(0, 0, 0, 0.05); }
-
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-            }
-
-            body {
-                margin: 1rem;
-            }
-
-            textarea {
-                height: 220px;
-            }
+        @media(max-width: 900px) {
+            .horizontal-split { flex-direction: column; }
+            textarea { height: 140px; }
         }
 
     </style>
 </head>
 <body>
 
-<h1>Expression Path Explorer</h1>
+<h1>Evaluator Tools</h1>
 
+<!-- PESTAÑAS PRINCIPALES -->
 <div class="tabs">
     <div class="tab active" data-tab="spel">SpEL</div>
     <div class="tab" data-tab="jsonpath">JSONPath</div>
 </div>
 
-<!-- ===== SpEL TAB ===== -->
+<!-- ====================== SpEL TAB ====================== -->
 <div class="tab-content active" id="spel">
-    <div class="tab-inner">
-        <!-- Find -->
-        <div class="card">
-            <h2>Find Value</h2>
-            <div class="hint">Enter a value to search in JSON and generate SpEL paths.</div>
-            <label>Value:</label>
-            <input type="text" id="find-value" placeholder="Example: John">
-            <label>JSON:</label>
-            <textarea id="find-json" placeholder='{"firstName":"John"}'></textarea>
-            <button onclick="findExpression()">Generate SpEL</button>
-            <pre id="find-result">Click button to see results</pre>
-        </div>
+    <!-- Sub-tabs Find / Evaluate -->
+    <div class="sub-tabs">
+        <div class="sub-tab active" data-sub="find">Find Value</div>
+        <div class="sub-tab" data-sub="evaluate">Evaluate Expression</div>
+    </div>
 
-        <!-- Evaluate -->
-        <div class="card">
-            <h2>Evaluate Expression</h2>
-            <div class="hint">Enter a SpEL expression to evaluate against JSON.</div>
-            <label>Expression:</label>
-            <input type="text" id="eval-expression" placeholder="data.firstName">
-            <label>JSON:</label>
-            <textarea id="eval-json" placeholder='{"firstName":"John"}'></textarea>
-            <button onclick="evaluateExpression()">Evaluate</button>
-            <pre id="eval-result">Click button to see results</pre>
+    <!-- FIND VALUE -->
+    <div class="sub-tab-content active" id="find">
+        <div class="horizontal-split">
+            <div class="card">
+                <h3>JSON Input</h3>
+                <textarea id="find-json" placeholder='{"firstName":"John"}'></textarea>
+                <label>Value:</label>
+                <input type="text" id="find-value" placeholder="Example: John">
+            </div>
+            <div class="card">
+                <h3>Result</h3>
+                <pre id="find-result">Click button to see results</pre>
+                <button onclick="findExpression()">Generate SpEL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EVALUATE EXPRESSION -->
+    <div class="sub-tab-content" id="evaluate">
+        <div class="horizontal-split">
+            <div class="card">
+                <h3>JSON Input</h3>
+                <textarea id="eval-json" placeholder='{"firstName":"John"}'></textarea>
+                <label>Expression:</label>
+                <input type="text" id="eval-expression" placeholder="data.firstName">
+            </div>
+            <div class="card">
+                <h3>Result</h3>
+                <pre id="eval-result">Click button to see results</pre>
+                <button onclick="evaluateExpression()">Evaluate</button>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- ===== JSONPath TAB ===== -->
+<!-- ====================== JSONPATH TAB ====================== -->
 <div class="tab-content" id="jsonpath">
-    <div class="tab-inner">
+    <div class="horizontal-split">
         <!-- Find -->
         <div class="card">
             <h2>Find Value</h2>
-            <div class="hint">Enter a value to generate JSONPath expressions.</div>
             <label>Value:</label>
             <input type="text" id="jp-find-value" placeholder="Juan">
             <label>JSON:</label>
             <textarea id="jp-find-json" placeholder='{"user":{"name":"Juan"}}'></textarea>
-            <button onclick="findJsonPath()">Generate JSONPath</button>
             <pre id="jp-find-result">Click button to see results</pre>
+            <button onclick="findJsonPath()">Generate JSONPath</button>
         </div>
-
         <!-- Evaluate -->
         <div class="card">
             <h2>Evaluate JSONPath</h2>
-            <div class="hint">Evaluate a JSONPath expression against JSON.</div>
             <label>Path:</label>
             <input type="text" id="jp-eval-path" placeholder="$.user.name">
             <label>JSON:</label>
             <textarea id="jp-eval-json" placeholder='{"user":{"name":"Juan"}}'></textarea>
-            <button onclick="evaluateJsonPath()">Evaluate</button>
             <pre id="jp-eval-result">Click button to see results</pre>
+            <button onclick="evaluateJsonPath()">Evaluate</button>
         </div>
     </div>
 </div>
 
 <script>
+    // Tabs principales
     const tabs = document.querySelectorAll('.tab');
     const contents = document.querySelectorAll('.tab-content');
-
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
             tabs.forEach(t => t.classList.remove('active'));
             contents.forEach(c => c.classList.remove('active'));
             tab.classList.add('active');
             document.getElementById(tab.dataset.tab).classList.add('active');
+        });
+    });
+
+    // Sub-tabs SpEL
+    const subTabs = document.querySelectorAll('.sub-tab');
+    const subContents = document.querySelectorAll('.sub-tab-content');
+    subTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            subTabs.forEach(t => t.classList.remove('active'));
+            subContents.forEach(c => c.classList.remove('active'));
+            tab.classList.add('active');
+            document.getElementById(tab.dataset.sub).classList.add('active');
         });
     });
 </script>
