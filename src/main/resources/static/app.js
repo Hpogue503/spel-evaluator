@@ -27,7 +27,7 @@ async function evaluateExpression() {
 
         const result = await res.json();
         resultArea.textContent = JSON.stringify(result, null, 2);
-        resultArea.style.color = "#2e7d32"; // verde
+         // verde
     } catch (err) {
         resultArea.textContent = err;
         resultArea.style.color = "red";
@@ -65,7 +65,7 @@ async function findExpression() {
 
         const result = await res.json();
         resultArea.textContent = JSON.stringify(result, null, 2);
-        resultArea.style.color = "#2e7d32"; // verde
+         // verde
     } catch (err) {
         resultArea.textContent = err;
         resultArea.style.color = "red";
@@ -107,7 +107,7 @@ async function evaluateJsonPath() {
 
         const result = await res.json();
         resultArea.textContent = JSON.stringify(result, null, 2);
-        resultArea.style.color = "#2e7d32"; // verde
+         // verde
     } catch (err) {
         resultArea.textContent = err;
         resultArea.style.color = "red";
@@ -145,7 +145,7 @@ async function findJsonPath() {
 
         const result = await res.json();
         resultArea.textContent = JSON.stringify(result, null, 2);
-        resultArea.style.color = "#2e7d32"; // verde
+         // verde
     } catch (err) {
         resultArea.textContent = err;
         resultArea.style.color = "red";
