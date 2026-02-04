@@ -137,20 +137,58 @@ async function findJsonPath() {
     }
 
     try {
-        const res = await fetch("/jsonpath/find-smart", {
+        const res = await fetch("/jsonpath/find", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ value, data })
         });
 
-        const result = await res.json();
-        resultArea.textContent = JSON.stringify(result, null, 2);
-         // verde
+        // Cambiado de res.json() a res.text() porque ahora devuelve YAML
+        const result = await res.text();
+        resultArea.textContent = result;
     } catch (err) {
         resultArea.textContent = err;
         resultArea.style.color = "red";
     }
 }
+
+// async function findJsonPath() {
+//     const resultArea = document.getElementById("jp-find-result");
+//     resultArea.style.color = "";
+//
+//     const value = document.getElementById("jp-find-value").value;
+//     const jsonText = document.getElementById("jp-find-json").value;
+//
+//     let data;
+//     try {
+//         data = JSON.parse(jsonText);
+//     } catch (e) {
+//         resultArea.textContent = "Invalid JSON!";
+//         resultArea.style.color = "red";
+//         return;
+//     }
+//
+//     if (!value || !value.trim()) {
+//         resultArea.textContent = "Value is empty!";
+//         resultArea.style.color = "red";
+//         return;
+//     }
+//
+//     try {
+//         const res = await fetch("/jsonpath/find", {
+//             method: "POST",
+//             headers: { "Content-Type": "application/json" },
+//             body: JSON.stringify({ value, data })
+//         });
+//
+//         const result = await res.json();
+//         resultArea.textContent = JSON.stringify(result, null, 2);
+//          // verde
+//     } catch (err) {
+//         resultArea.textContent = err;
+//         resultArea.style.color = "red";
+//     }
+// }
 
 // =======================
 // Util

@@ -3,7 +3,6 @@ package com.utils.spelevaluator.service;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,90 +16,35 @@ public class JsonPathFinderService {
        PUBLIC API
        ========================= */
 
-    public Map<String, Object> find(Map<String, Object> body) {
 
-        Map<String, Object> response = new HashMap<>();
-
+    public String find(Map<String, Object> body) {
         Object valueObj = body.get("value");
         Object dataObj = body.get("data");
 
         if (valueObj == null || dataObj == null) {
-            response.put("error", "Missing value or data");
-            return response;
+            return "error: Missing value or data\n";
         }
 
         List<String> results = new ArrayList<>();
         findJsonPathMatches(dataObj, valueObj.toString(), "$", results);
 
-        response.put("results", results);
-        return response;
+        return toYaml(results);
     }
 
-    public Map<String, Object> findSmart(Map<String, Object> body) {
-
-        Map<String, Object> response = new HashMap<>();
-
-        Object valueObj = body.get("value");
-        Object dataObj = body.get("data");
-
-        if (valueObj == null || dataObj == null) {
-            response.put("error", "Missing value or data");
-            return response;
+    private String toYaml(List<String> results) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("results:\n");
+        for (String r : results) {
+            // Agregamos comillas dobles y escapamos comillas internas
+            sb.append("  - \"").append(r.replace("\"", "\\\"")).append("\"\n");
         }
-
-        List<String> results = new ArrayList<>();
-        findJsonPathMatchesSmart(dataObj, valueObj.toString(), "$", results);
-
-        response.put("results", results);
-        return response;
+        return sb.toString();
     }
 
-    /* =========================
-       INTERNAL LOGIC
-       ========================= */
+
 
     @SuppressWarnings("unchecked")
     private void findJsonPathMatches(
-            Object node,
-            String target,
-            String path,
-            List<String> results
-    ) {
-
-        if (node instanceof Map<?, ?> mapNode) {
-            for (Map.Entry<?, ?> entry : mapNode.entrySet()) {
-                String key = entry.getKey().toString();
-                Object value = entry.getValue();
-
-                String newPath = path + "." + key;
-
-                if (value != null && target.equals(value.toString())) {
-                    results.add(newPath);
-                }
-
-                if (value instanceof Map || value instanceof List) {
-                    findJsonPathMatches(value, target, newPath, results);
-                }
-            }
-        }
-        else if (node instanceof List<?> listNode) {
-            for (int i = 0; i < listNode.size(); i++) {
-                Object value = listNode.get(i);
-                String newPath = path + "[" + i + "]";
-
-                if (value != null && target.equals(value.toString())) {
-                    results.add(newPath);
-                }
-
-                if (value instanceof Map || value instanceof List) {
-                    findJsonPathMatches(value, target, newPath, results);
-                }
-            }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void findJsonPathMatchesSmart(
             Object node,
             String target,
             String path,
@@ -120,7 +64,7 @@ public class JsonPathFinderService {
                 }
 
                 if (value instanceof Map || value instanceof List) {
-                    findJsonPathMatchesSmart(value, target, newPath, results);
+                    findJsonPathMatches(value, target, newPath, results);
                 }
             }
         }
@@ -142,7 +86,7 @@ public class JsonPathFinderService {
                 }
 
                 if (element instanceof Map || element instanceof List) {
-                    findJsonPathMatchesSmart(element, target, newPath, results);
+                    findJsonPathMatches(element, target, newPath, results);
                 }
             }
         }
@@ -168,4 +112,5 @@ public class JsonPathFinderService {
         }
         return "['" + fieldName + "']";
     }
+
 }
