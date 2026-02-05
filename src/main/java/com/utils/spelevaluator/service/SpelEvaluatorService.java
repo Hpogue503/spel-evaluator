@@ -1,17 +1,21 @@
 package com.utils.spelevaluator.service;
 
-import org.springframework.context.expression.MapAccessor;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.MissingNode;
+import org.springframework.expression.*;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.ReflectivePropertyAccessor;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Service
 public class SpelEvaluatorService {
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final SpelExpressionParser parser = new SpelExpressionParser();
 
     public Map<String, Object> evaluate(Map<String, Object> body) {
 
@@ -25,27 +29,85 @@ public class SpelEvaluatorService {
             return response;
         }
 
-        if (data == null) {
-            response.put("error", "Data is missing");
-            return response;
-        }
-
-        StandardEvaluationContext ctx = new StandardEvaluationContext(data);
-        ctx.setPropertyAccessors(List.of(
-                new MapAccessor(),
-                new ReflectivePropertyAccessor()
-        ));
-
         try {
-            Object result = new SpelExpressionParser()
+            JsonNode root = (data == null)
+                    ? MissingNode.getInstance()
+                    : objectMapper.valueToTree(data);
+
+            StandardEvaluationContext context =
+                    new StandardEvaluationContext(root);
+
+            context.addPropertyAccessor(new JsonNodePropertyAccessor());
+
+            Object result = parser
                     .parseExpression(expression)
-                    .getValue(ctx);
+                    .getValue(context);
 
             response.put("result", result);
+
         } catch (Exception e) {
             response.put("error", e.getMessage());
         }
 
         return response;
+    }
+
+    /**
+     * PropertyAccessor seguro para JsonNode
+     */
+    static class JsonNodePropertyAccessor implements PropertyAccessor {
+
+        @Override
+        public Class<?>[] getSpecificTargetClasses() {
+            return new Class<?>[]{JsonNode.class};
+        }
+
+        @Override
+        public boolean canRead(
+                EvaluationContext context,
+                Object target,
+                String name
+        ) {
+            return target instanceof JsonNode;
+        }
+
+        @Override
+        public TypedValue read(
+                EvaluationContext context,
+                Object target,
+                String name
+        ) {
+            JsonNode node = (JsonNode) target;
+            JsonNode value = node.get(name);
+
+            if (value == null || value.isMissingNode() || value.isNull()) {
+                return TypedValue.NULL;
+            }
+
+            if (value.isValueNode()) {
+                return new TypedValue(value.asText());
+            }
+
+            return new TypedValue(value);
+        }
+
+        @Override
+        public boolean canWrite(
+                EvaluationContext context,
+                Object target,
+                String name
+        ) {
+            return false;
+        }
+
+        @Override
+        public void write(
+                EvaluationContext context,
+                Object target,
+                String name,
+                Object newValue
+        ) {
+            throw new UnsupportedOperationException();
+        }
     }
 }
